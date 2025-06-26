@@ -7,8 +7,7 @@ async function main() {
         const config = await ConfigManager.initialize();
         const gmailService = await GmailService.initialize(config);
 
-        const profile = await gmailService.getProfile();
-        logger.info(`Authenticated as: ${profile.emailAddress}`);
+        await gmailService.getProfile();
 
         await gmailService.fetchAndDisplayMessages(config.messageCount);
     } catch (error) {

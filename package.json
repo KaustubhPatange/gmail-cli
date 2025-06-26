@@ -1,9 +1,12 @@
 {
-  "name": "gmail",
+  "name": "gmail-cli",
   "version": "1.0.0",
   "main": "src/gmail.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "bun src/gmail.js"
+  },
+  "bin": {
+    "gmail-cli": "./bin/gmail-cli.js"
   },
   "keywords": [],
   "author": "",
@@ -11,6 +14,7 @@
   "description": "",
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
+    "chalk": "^5.4.1",
     "googleapis": "^105.0.0",
     "yargs": "^17.7.2"
   }
