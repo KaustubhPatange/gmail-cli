@@ -9,7 +9,7 @@ export class AuthenticationManager {
 
     static async authorize(config) {
         try {
-            const savedCredentials = await this.loadSavedCredentials(config.tokenPath);
+            const savedCredentials = await this.loadSavedCredentials(config.tokenPath, config);
             if (savedCredentials) {
                 return savedCredentials;
             }
@@ -29,9 +29,10 @@ export class AuthenticationManager {
         }
     }
 
-    static async loadSavedCredentials(tokenPath) {
+    static async loadSavedCredentials(tokenPath, config) {
         try {
-            const content = await fs.readFile(tokenPath);
+            const credPath = await this.constructTokenPath(tokenPath, config)
+            const content = await fs.readFile(credPath);
             const credentials = JSON.parse(content);
             return google.auth.fromJSON(credentials);
         } catch (error) {
@@ -53,10 +54,19 @@ export class AuthenticationManager {
                 refresh_token: client.credentials.refresh_token,
             };
 
-            await fs.writeFile(config.tokenPath, JSON.stringify(payload, null, 2));
+            const credPath = await this.constructTokenPath(config.tokenPath, config)
+
+            await fs.writeFile(credPath, JSON.stringify(payload, null, 2));
             logger.debug('Credentials saved successfully');
         } catch (error) {
             throw new Error(`Failed to save credentials: ${error.message}`);
         }
     }
+
+  static async constructTokenPath(tokenPath, config) {
+    const content = await fs.readFile(config.credentialsPath);
+    const keys = JSON.parse(content);
+    const key = keys.installed || keys.web;
+    return path.join(tokenPath, `token-${key.client_id}.json`)
+  }
 }
