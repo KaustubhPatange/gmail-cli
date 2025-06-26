@@ -31,9 +31,37 @@ export class GmailService {
         }
     }
 
+    async listUniqueReceivedEmails(count ) {
+      const uniqueMessages = []
+      const seenThreads = new Set();
+      let pageToken = undefined;
+
+      while (uniqueMessages.length < count) {
+        const res = await this.gmail.users.messages.list({
+          userId: 'me',
+          maxResults: count * 2,
+          q: 'in:inbox -from:me',
+          pageToken,
+        });
+
+        const messages = res.data.messages || [];
+        for (const msg of messages) {
+          if (msg.threadId && !seenThreads.has(msg.threadId)) {
+            seenThreads.add(msg.threadId);
+            uniqueMessages.push(msg);
+            if (uniqueMessages.length === count) break;
+          }
+        }
+
+        pageToken = res.data.nextPageToken;
+        if (!pageToken) break;
+      }
+
+      return uniqueMessages;
+    }
+
     async listMessages(count) {
-        const response = await this.gmail.users.messages.list({ userId: 'me', maxResults: count, q: 'in:inbox -from:me' });
-        return response.data.messages || [];
+        return this.listUniqueReceivedEmails(count);
     }
 
     async processMessages(messages, count) {
