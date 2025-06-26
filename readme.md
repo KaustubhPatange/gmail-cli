@@ -2,6 +2,8 @@
 
 A command-line interface for accessing Gmail, built with Bun and the Gmail API. Efficiently manage and read your Gmail messages directly from the terminal.
 
+![](assets/preview.png)
+
 ## Prerequisites
 
 - [Bun](https://bun.sh) (v1.0.0 or higher)
@@ -22,9 +24,10 @@ curl -fsSL https://bun.sh/install | bash
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/EsmaeelNabil/gmail-cli
+git clone https://github.com/KaustubhPatange/gmail-cli
 cd gmail-cli
 bun install
+bun link .
 ```
 
 ### 3. Gmail API Credentials
@@ -64,16 +67,16 @@ Your credentials file should look similar to this:
 
 ```bash
 # Read latest 5 messages (default)
-bun src/gmail.js
+gmail-cli
 
 # Read specific number of messages
-bun src/gmail.js -m 10
+gmail-cli -m 10
 
 # Use custom credentials file location
-bun src/gmail.js -c /path/to/credentials.json
+gmail-cli -c /path/to/credentials.json
 
 # Enable debug logging
-bun src/gmail.js --debug
+gmail-cli --debug
 ```
 
 ### Command Line Options

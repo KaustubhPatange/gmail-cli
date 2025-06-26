@@ -1,6 +1,5 @@
 import { google } from 'googleapis';
 import { AuthenticationManager } from '../auth/AuthenticationManager.js';
-import { MessageFormatter } from '../utils/MessageFormatter.js';
 import { logger } from '../utils/logger.js';
 import chalk from 'chalk';
 
