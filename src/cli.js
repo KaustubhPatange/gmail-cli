@@ -9,6 +9,12 @@ export const args = yargs(hideBin(process.argv))
             default: 5,
             description: 'Number of messages to fetch'
         },
+        skip: {
+            alias: 's',
+            type: 'number',
+            default: 0,
+            description: 'Number of messages to skip'
+        },
         credentials: {
             alias: 'c',
             type: 'string',

@@ -22,24 +22,25 @@ export class GmailService {
         }
     }
 
-    async fetchAndDisplayMessages(count) {
+    async fetchAndDisplayMessages(count, skipCount = 0) {
         try {
-            const messages = await this.listMessages(count);
+            const messages = await this.listMessages(count, skipCount);
             await this.processMessages(messages, count);
         } catch (error) {
             throw new Error(`Failed to fetch messages: ${error.message}`);
         }
     }
 
-    async listUniqueReceivedEmails(count ) {
+    async listUniqueReceivedEmails(count, skipCount = 0) {
       const uniqueMessages = []
       const seenThreads = new Set();
       let pageToken = undefined;
+      let skippedCount = 0;
 
       while (uniqueMessages.length < count) {
         const res = await this.gmail.users.messages.list({
           userId: 'me',
-          maxResults: count * 2,
+          maxResults: Math.max(count, skipCount) * 2,
           q: 'in:inbox -from:me',
           pageToken,
         });
@@ -48,6 +49,13 @@ export class GmailService {
         for (const msg of messages) {
           if (msg.threadId && !seenThreads.has(msg.threadId)) {
             seenThreads.add(msg.threadId);
+            
+            // Skip messages if needed
+            if (skippedCount < skipCount) {
+              skippedCount++;
+              continue;
+            }
+            
             uniqueMessages.push(msg);
             if (uniqueMessages.length === count) break;
           }
@@ -60,8 +68,8 @@ export class GmailService {
       return uniqueMessages;
     }
 
-    async listMessages(count) {
-        return this.listUniqueReceivedEmails(count);
+    async listMessages(count, skipCount = 0) {
+        return this.listUniqueReceivedEmails(count, skipCount);
     }
 
     async processMessages(messages, count) {
@@ -102,7 +110,7 @@ export class GmailService {
             `${chalk.underline.grey(gmailUrl)}\n`
           );
         } catch (error) {
-            logger.error(`Failed to process message ${message.id}:`, error);
+            logger.error(`Failed to process message ${msg.id}:`, error);
         }
     }
 }

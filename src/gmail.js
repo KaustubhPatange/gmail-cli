@@ -9,7 +9,7 @@ async function main() {
 
         await gmailService.getProfile();
 
-        await gmailService.fetchAndDisplayMessages(config.messageCount);
+        await gmailService.fetchAndDisplayMessages(config.messageCount, config.skipCount);
     } catch (error) {
         logger.error('Application error:', error);
         process.exit(1);
